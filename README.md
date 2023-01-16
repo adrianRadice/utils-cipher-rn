@@ -20,7 +20,6 @@ npm install --save react-native-themis
     ownerMessagePrivateKey: ownerMessageKeyPair.private,
     receiverMessagePublicKey: receiverMessageKeyPair.public,
   });
-
   const decrypted = await ReadSecureMessage({
     encryptedAndSignedContent: encrypted,
     ownerMessagePublicKey: ownerMessageKeyPair.public,

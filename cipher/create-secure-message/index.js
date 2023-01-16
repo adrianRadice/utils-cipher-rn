@@ -1,9 +1,8 @@
-import base64 from 'react-native-base64';
 import EncryptAndSign from '../encrypt-and-sign';
 import CreateSymmetricKey from '../shared/services/symmetric/create-key';
 import EncryptText from '../shared/services/symmetric/encrypt-text';
 /**
- * Retorna un mensaje cifrado y firmado
+ * Retorna un mensaje cifrado siemtricamente y la clave con la que  se cifro firmada y cifrada asim
  *
  * @param content Contenido del mensaje.
  * @param receiverMessagePublicKey clave publica del destinatario para cifrar mensaje .
@@ -16,21 +15,19 @@ const CreateSecureMessage = async ({
 }) => {
   const symmetricKey = await CreateSymmetricKey();
 
-  const encryptMessage = await EncryptText({
-    key: symmetricKey,
-    text: JSON.stringify(content),
-  });
+  const [encryptMessage, secureKey] = await Promise.all([
+    EncryptText({
+      key: symmetricKey,
+      text: JSON.stringify(content),
+    }),
+    EncryptAndSign({
+      content: symmetricKey,
+      ownerDataPrivateKey: ownerMessagePrivateKey,
+      receiverPublicKey: receiverMessagePublicKey,
+    }),
+  ]);
 
-  const pkt = JSON.stringify({key: symmetricKey, content: encryptMessage});
-
-  const encodedMsgAndKey = base64.encode(pkt);
-
-  return EncryptAndSign({
-    content: encodedMsgAndKey,
-    symmetricKey,
-    ownerDataPrivateKey: ownerMessagePrivateKey,
-    receiverPublicKey: receiverMessagePublicKey,
-  });
+  return {key: secureKey, content: encryptMessage};
 };
 
 export default CreateSecureMessage;

@@ -1,5 +1,4 @@
-import base64 from 'react-native-base64';
-import DesencryptAndVerifySign from '../desencrypt-and-verify-sign';
+import DecryptAndVerifySign from '../decrypt-and-verify-sign';
 import DecryptText from '../shared/services/symmetric/decrypt-text';
 /**
  * Recupera el contenido de un mensaje cifrado y firmado
@@ -12,13 +11,15 @@ const ReadSecureMessage = async ({
   receiverMessagePrivateKey,
   ownerMessagePublicKey,
 }) => {
-  const pkt = await DesencryptAndVerifySign({
-    encryptedAndSignedContent: encryptedAndSignedContent,
+  const key = await DecryptAndVerifySign({
+    encryptedAndSignedContent: encryptedAndSignedContent.key,
     receiverMessagePrivateKey: receiverMessagePrivateKey,
     ownerMessagePublicKey: ownerMessagePublicKey,
   });
-  const {key, content} = JSON.parse(base64.decode(pkt));
-  const message = await DecryptText({key, encryptedText: content});
+  const message = await DecryptText({
+    key,
+    encryptedText: encryptedAndSignedContent.content,
+  });
   return message;
 };
 

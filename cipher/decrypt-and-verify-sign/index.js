@@ -1,5 +1,5 @@
 import {secureMessageDecrypt64} from 'react-native-themis';
-const DesencryptAndVerifySign = async ({
+const DecryptAndVerifySign = async ({
   encryptedAndSignedContent,
   receiverMessagePrivateKey,
   ownerMessagePublicKey,
@@ -10,4 +10,4 @@ const DesencryptAndVerifySign = async ({
     ownerMessagePublicKey,
   );
 };
-export default DesencryptAndVerifySign;
+export default DecryptAndVerifySign;
